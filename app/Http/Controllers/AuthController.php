@@ -2,7 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Services\UserService;
 use App\User;
+use App\Http\Resources\UserResource;
 use App\Http\Requests\ForgotRequest;
 use App\Http\Requests\RegisterRequest;
 use App\Http\Requests\LoginRequest;
@@ -12,9 +14,9 @@ class AuthController extends Controller
 
     /**
      * the model instance
-     * @var User
+     * @var UserService
      */
-    private $user;
+    private $userService;
 
 
     /**
@@ -23,9 +25,9 @@ class AuthController extends Controller
      * @param User $user
      * @return void
      */
-    public function __construct(User $user)
+    public function __construct()
     {
-        $this->user = $user;
+        $this->userService = new UserService();
     }
 
 
@@ -33,23 +35,18 @@ class AuthController extends Controller
      * Handle a registration request for the application.
      *
      * @param RegisterRequest $request
-     * @return Response
+     * @return \Illuminate\Http\JsonResponse
      */
     public function register(RegisterRequest $request)
     {
-        $newUser = $this->user->create([
-            'name' => $request->get('name'),
-            'email' => $request->get('email'),
-            'password' => bcrypt($request->get('password')),
-            'token' => str_random(20),
-        ]);
+        $newUser = $this->userService->createUser($request);
 
         if (!$newUser) {
             return response()->json(['failed_to_create_new_user']);
         }
 
-        return response()
-            ->json(['user_created'])
+        return (new UserResource($newUser))
+            ->response()
             ->header('Authorization', 'Basic'. $newUser->token);
     }
 
@@ -58,11 +55,14 @@ class AuthController extends Controller
      * Handle a login request to the application.
      *
      * @param LoginRequest $request
-     * @return Response
+     * @return UserResource
      */
     public function login(LoginRequest $request)
     {
-        return response()->json(['user_login']);
+        $token = substr($request->header('Authorization'), 5);
+        $user = $this->userService->getUser('token', $token);
+
+        return new UserResource($user);
     }
 
 
@@ -70,18 +70,17 @@ class AuthController extends Controller
      * Handle a login request to the application.
      *
      * @param ForgotRequest $request
-     * @return Response
+     * @return UserResource
      */
     public function forgot(ForgotRequest $request)
     {
-        $updUser = $this->user
-            ->where('email', $request->get('email'))
-            ->update(['token' => str_random(20)]);
+        $user = $this->userService->getUser('email', $request->get('email'));
+        $updUser = $this->userService->updateUser($user, 'token', str_random(20));
 
         if (!$updUser) {
             return response()->json(['failed_to_send_token']);
         }
 
-        return response()->json(['check_email']);
+        return new UserResource($user);
     }
 }
