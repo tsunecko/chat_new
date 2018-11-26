@@ -16,8 +16,7 @@ Route::get('/', function () {
 });
 
 
-//Route::post('/login', 'AuthController@login');
-Route::post('login', 'AuthController@login');
+Route::post('login', 'AuthController@login')->middleware('auth');
 
 Route::post('register', 'AuthController@register');
 

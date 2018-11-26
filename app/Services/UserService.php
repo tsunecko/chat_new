@@ -53,12 +53,22 @@ class UserService
      * Update User model
      *
      * @param $user
-     * @param $updField
-     * @param $updValue
+     * @param $field
+     * @param $value
      * @return bool
      */
-    public function updateUser($user, $updField, $updValue): bool
+    public function updateUser($user, $field, $value): bool
     {
-        return $user->update([$updField => $updValue]);
+        return $user->update([$field => $value]);
+    }
+
+
+    public function loginUser($request)
+    {
+        return User::where([
+            ['name', '=', $request->name],
+            ['password', '=', decrypt($request->password)],
+        ])
+            ->first();
     }
 }
