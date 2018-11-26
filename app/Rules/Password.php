@@ -9,15 +9,16 @@ use Illuminate\Support\Facades\Hash;
 
 class Password implements Rule
 {
+    private $hash;
 
     /**
      * Create a new rule instance.
      *
-     * @param User $user
+     * @param $hash
      */
-    public function __construct()
+    public function __construct($hash)
     {
-        //
+        $this->hash = $hash;
     }
 
     /**
@@ -29,7 +30,7 @@ class Password implements Rule
      */
     public function passes($attribute, $value)
     {
-        return Hash::check($value, Auth::user());
+        return password_verify($value, $this->hash);
     }
 
     /**

@@ -43,7 +43,7 @@ class UserService
         return User::create([
             'name' => $request->get('name'),
             'email' => $request->get('email'),
-            'password' => bcrypt($request->get('password')),
+            'password' => password_hash($request->get('password'), PASSWORD_BCRYPT),
             'token' => str_random(20),
         ]);
     }

@@ -13,6 +13,7 @@ class Helper
      */
     public static function getToken($request) :string
     {
-        return substr($request->header('Authorization'), 5);
+//        return substr($request->header('Authorization'), 5);
+        return $request->header('Authorization');
     }
 }

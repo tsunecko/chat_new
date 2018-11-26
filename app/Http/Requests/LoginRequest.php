@@ -11,7 +11,6 @@ use App\Rules\Password;
 
 class LoginRequest extends FormRequest
 {
-    private $user;
 
     /**
      * Determine if the user is authorized to make this request.
@@ -30,9 +29,13 @@ class LoginRequest extends FormRequest
      */
     public function rules()
     {
+        $user = User::where('token', Helper::getToken(request()))
+            ->select('password')
+            ->first();
+
         return [
             'name' => 'required|string|max:255',
-            'password' => 'required|max:255|min:6|string',
+            'password' => ['required', 'max:255', 'min:6', 'string', new Password($user->password)],
         ];
     }
 

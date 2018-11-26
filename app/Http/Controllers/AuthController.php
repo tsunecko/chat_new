@@ -58,10 +58,8 @@ class AuthController extends Controller
      */
     public function login(LoginRequest $request)
     {
-        /*$token = Helper::getToken($request);
-        $user = $this->userService->getUser('token', $token);*/
-
-        $user = $this->userService->loginUser($request);
+        $token = Helper::getToken($request);
+        $user = $this->userService->getUser('token', $token);
 
         return new UserResource($user);
     }
