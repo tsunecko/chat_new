@@ -2,9 +2,7 @@
 
 namespace App\Rules;
 
-use App\User;
 use Illuminate\Contracts\Validation\Rule;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 
 class Password implements Rule
@@ -30,7 +28,7 @@ class Password implements Rule
      */
     public function passes($attribute, $value)
     {
-        return password_verify($value, $this->hash);
+        return Hash::check($value, $this->hash);
     }
 
     /**

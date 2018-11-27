@@ -31,7 +31,7 @@ class UserResource extends JsonResource
      */
     public function withResponse($request, $response)
     {
-        $response->header('Authorization', 'Basic'. $this->token);
+        $response->header('Authorization', $this->token);
     }
 
 //    /**

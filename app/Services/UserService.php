@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\User;
+use Illuminate\Support\Facades\Hash;
 
 class UserService
 {
@@ -43,8 +44,8 @@ class UserService
         return User::create([
             'name' => $request->get('name'),
             'email' => $request->get('email'),
-            'password' => password_hash($request->get('password'), PASSWORD_BCRYPT),
-            'token' => str_random(20),
+            'password' => Hash::make($request->get('password')),
+            'token' => password_hash(str_random(10), PASSWORD_BCRYPT),
         ]);
     }
 
@@ -62,13 +63,4 @@ class UserService
         return $user->update([$field => $value]);
     }
 
-
-    public function loginUser($request)
-    {
-        return User::where([
-            ['name', '=', $request->name],
-            ['password', '=', decrypt($request->password)],
-        ])
-            ->first();
-    }
 }

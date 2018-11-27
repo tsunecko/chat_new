@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use App\Helpers\Helper;
 use App\Services\UserService;
 use App\Http\Resources\UserResource;
 use App\Http\Requests\ForgotRequest;
@@ -46,7 +45,7 @@ class AuthController extends Controller
             return response()->json(['failed_to_create_new_user']);
         }
 
-        return new UserResource($newUser);
+        return $this->auth($request);
     }
 
 
@@ -58,10 +57,7 @@ class AuthController extends Controller
      */
     public function login(LoginRequest $request)
     {
-        $token = Helper::getToken($request);
-        $user = $this->userService->getUser('token', $token);
-
-        return new UserResource($user);
+        return $this->auth($request);
     }
 
 
@@ -85,4 +81,22 @@ class AuthController extends Controller
 
         return response()->json(['check_email']);
     }
+
+    /**
+     * Auth User
+     *
+     * @param $request
+     * @return UserResource|\Illuminate\Http\JsonResponse
+     */
+    public function auth($request)
+    {
+        $credentials = $request->only('name', 'password');
+
+        if (Auth::attempt($credentials)) {
+            return new UserResource(Auth::user());
+        }
+
+        return response()->json(['failed_login']);
+    }
+
 }

@@ -2,7 +2,6 @@
 
 namespace App\Http\Requests;
 
-use App\Helpers\Helper;
 use App\User;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Contracts\Validation\Validator;
@@ -29,12 +28,12 @@ class LoginRequest extends FormRequest
      */
     public function rules()
     {
-        $user = User::where('token', Helper::getToken(request()))
+        $user = User::where('token', request()->header('Authorization'))
             ->select('password')
             ->first();
 
         return [
-            'name' => 'required|string|max:255',
+            'name' => 'required|string|max:255|exists:users,name',
             'password' => ['required', 'max:255', 'min:6', 'string', new Password($user->password)],
         ];
     }

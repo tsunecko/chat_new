@@ -17,7 +17,7 @@ class CheckToken
      */
     public function handle($request, Closure $next)
     {
-        if (User::where('token', Helper::getToken($request))->exists()) {
+        if (User::where('token', $request->header('Authorization'))->exists()) {
             return $next($request);
         }
 
