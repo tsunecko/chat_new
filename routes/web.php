@@ -16,8 +16,8 @@ Route::get('/', function () {
 });
 
 
-Route::post('login', 'AuthController@login')->middleware('auth');
+Route::post('login', 'AuthController@login');
 
 Route::post('register', 'AuthController@register');
 
-Route::post('forgot', 'AuthController@forgot');
+Route::post('reset', 'AuthController@reset');

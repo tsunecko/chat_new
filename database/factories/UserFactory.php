@@ -16,7 +16,7 @@ use Illuminate\Support\Facades\Hash;
 
 $factory->define(App\User::class, function (Faker $faker) {
     return [
-        'name' => $faker->name,
+        'name' => $faker->word,
         'email' => $faker->unique()->safeEmail,
         'password' => Hash::make('123456'), // secret
         'token' => $faker->unique()->password,

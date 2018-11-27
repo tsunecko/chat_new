@@ -2,6 +2,8 @@
 
 namespace App\Services;
 
+use App\Http\Requests\RegisterRequest;
+use App\ResetPassword;
 use App\User;
 use Illuminate\Support\Facades\Hash;
 
@@ -39,7 +41,7 @@ class UserService
      * @param $request
      * @return User
      */
-    public function createUser($request): User
+    public function createUser(RegisterRequest $request): User
     {
         return User::create([
             'name' => $request->get('name'),
@@ -53,14 +55,16 @@ class UserService
     /**
      * Update User model
      *
-     * @param $user
-     * @param $field
-     * @param $value
+     * @param $email
+     * @param $token
      * @return bool
      */
-    public function updateUser($user, $field, $value): bool
+    public function resetPwd($email, $token): ResetPassword
     {
-        return $user->update([$field => $value]);
+        return ResetPassword::create([
+            'email' => $email,
+            'token' => $token
+        ]);
     }
 
 }

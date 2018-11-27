@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Services\UserService;
 use App\Http\Resources\UserResource;
-use App\Http\Requests\ForgotRequest;
+use App\Http\Requests\ResetRequest;
 use App\Http\Requests\RegisterRequest;
 use App\Http\Requests\LoginRequest;
 use Illuminate\Support\Facades\Auth;
@@ -64,18 +64,17 @@ class AuthController extends Controller
     /**
      * Handle a login request to the application.
      *
-     * @param ForgotRequest $request
+     * @param ResetRequest $request
      * @return \Illuminate\Http\JsonResponse
      */
-    public function forgot(ForgotRequest $request)
+    public function reset(ResetRequest $request)
     {
-        $userEmail = $request->get('email');
-        $user = $this->userService->getUser('email', $userEmail);
+        $email = $request->get('email');
 
-        $newToken = str_random(20);
-        $updUser = $this->userService->updateUser($user, 'token', $newToken);
+        $token = bcrypt(str_random(10));
+        $resetPwd = $this->userService->resetPwd($email, $token);
 
-        if (!$updUser) {
+        if (!$resetPwd) {
             return response()->json(['failed_to_send_token']);
         }
 
