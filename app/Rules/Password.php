@@ -7,17 +7,22 @@ use Illuminate\Support\Facades\Hash;
 
 class Password implements Rule
 {
-    private $hash;
+    private $pwd;
+
 
     /**
      * Create a new rule instance.
      *
-     * @param $hash
+     * @param $user
      */
-    public function __construct($hash)
+    public function __construct($user)
     {
-        $this->hash = $hash;
+        if ($user) {
+            $this->pwd = $user->password;
+        }
+        return false;
     }
+
 
     /**
      * Determine if the validation rule passes.
@@ -28,8 +33,9 @@ class Password implements Rule
      */
     public function passes($attribute, $value)
     {
-        return Hash::check($value, $this->hash);
+        return Hash::check($value, $this->pwd);
     }
+
 
     /**
      * Get the validation error message.
@@ -38,6 +44,6 @@ class Password implements Rule
      */
     public function message()
     {
-        return 'The selected :attribute is wrong';
+        return 'The name or the password is wrong';
     }
 }

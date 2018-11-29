@@ -16,12 +16,14 @@ class ResetRequest extends FormRequest
      */
     public function authorize()
     {
-        if (User::where('email', $this->request->get('email'))
+
+        if (User::query()->where('email', $this->request->get('email'))
             ->first()
         ) {
             return true;
         }
         return false;
+
     }
 
     /**

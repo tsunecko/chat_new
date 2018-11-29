@@ -7,7 +7,7 @@ use App\ResetPassword;
 use App\User;
 use Illuminate\Support\Facades\Hash;
 
-class UserService
+class UserService implements UserServiceInterface
 {
 
     /**
@@ -24,14 +24,15 @@ class UserService
     /**
      * Get User model instance
      *
-     * @param $field
      * @param $value
-     * @return User
+     * @return User|bool|\Illuminate\Database\Eloquent\Builder|\Illuminate\Database\Eloquent\Model|object
      */
-    public function getUser($field, $value): User
+    public function one($value)
     {
-        return User::where($field, $value)
-            ->first();
+        if ($user = User::query()->where('name', $value)->first()) {
+            return $user;
+        }
+        return false;
     }
 
 
@@ -41,14 +42,32 @@ class UserService
      * @param $request
      * @return User
      */
-    public function createUser(RegisterRequest $request): User
+    public function createUser($data): bool
     {
-        return User::create([
-            'name' => $request->get('name'),
-            'email' => $request->get('email'),
-            'password' => Hash::make($request->get('password')),
-            'token' => password_hash(str_random(10), PASSWORD_BCRYPT),
-        ]);
+        $password = array_get($data,'password');
+
+        $user = User::query()->make()->fill(
+            array_merge(
+                array_only($data,['name','email']),
+                [
+                    'password'=>sha1($password),
+                ]
+            )
+        );
+
+        if ($user){
+            return $user->save();
+        }
+
+        return false;
+
+
+//        return User::query()->create([
+//            'name' => $request->get('name'),
+//            'email' => $request->get('email'),
+//            'password' => Hash::make($request->get('password')),
+//            'token' => password_hash(str_random(10), PASSWORD_BCRYPT),
+//        ]);
     }
 
 

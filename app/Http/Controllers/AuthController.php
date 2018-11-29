@@ -7,7 +7,9 @@ use App\Http\Resources\UserResource;
 use App\Http\Requests\ResetRequest;
 use App\Http\Requests\RegisterRequest;
 use App\Http\Requests\LoginRequest;
+use App\Services\UserServiceInterface;
 use Illuminate\Support\Facades\Auth;
+use Symfony\Component\HttpFoundation\Request;
 
 class AuthController extends Controller
 {
@@ -25,9 +27,13 @@ class AuthController extends Controller
      * @param UserService
      * @return void
      */
-    public function __construct()
+    public function __construct(UserService $userService)
     {
-        $this->userService = new UserService();
+        $this->userService = $userService;
+
+//        $userService->getAll();
+
+//        $this->userService = new UserService();
     }
 
 
@@ -39,9 +45,19 @@ class AuthController extends Controller
      */
     public function register(RegisterRequest $request)
     {
-        $newUser = $this->userService->createUser($request);
+
+
+//        $request->get('email');
+//        $request->input('email');
+//        $request->email;
+
+
+
+        $newUser = $this->userService->createUser($request->validated());
+
 
         if (!$newUser) {
+//            abort(422, 'filed user created');
             return response()->json(['failed_to_create_new_user']);
         }
 
@@ -89,13 +105,14 @@ class AuthController extends Controller
      */
     public function auth($request)
     {
-        $credentials = $request->only('name', 'password');
+        //$credentials = $request->only('name', 'password');
 
-        if (Auth::attempt($credentials)) {
-            return new UserResource(Auth::user());
-        }
+        //if (Auth::attempt($credentials)) {
+            return UserResource::make($this->userService->one($request->get('name')));
+//            return new UserResource(Auth::user());
+        //}
 
-        return response()->json(['failed_login']);
+        //return response()->json(['failed_login']);
     }
 
 }

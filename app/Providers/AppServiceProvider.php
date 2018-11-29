@@ -2,10 +2,16 @@
 
 namespace App\Providers;
 
+use App\Services\UserService;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
 {
+
+    public $singletons = [
+        UserService::class,
+    ];
+
     /**
      * Bootstrap any application services.
      *
@@ -23,6 +29,7 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register()
     {
+//        $this->register(UserService:::class, AppService::class);
         //
     }
 }
