@@ -5,8 +5,6 @@ namespace App\Http\Requests;
 use App\Rules\Password;
 use App\Services\UserService;
 use Illuminate\Foundation\Http\FormRequest;
-use Illuminate\Contracts\Validation\Validator;
-use Illuminate\Http\Exceptions\HttpResponseException;
 
 class LoginRequest extends FormRequest
 {
@@ -30,7 +28,7 @@ class LoginRequest extends FormRequest
      */
     public function rules(UserService $userService)
     {
-        $user = $userService->one(request()->name);
+        $user = $userService->one('name', request('name'));
 
         return [
             'name' => ['required', 'string', 'max:255'],

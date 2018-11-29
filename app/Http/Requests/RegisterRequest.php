@@ -2,9 +2,8 @@
 
 namespace App\Http\Requests;
 
-use Illuminate\Contracts\Validation\Validator;
+use App\Services\UserService;
 use Illuminate\Foundation\Http\FormRequest;
-use Illuminate\Http\Exceptions\HttpResponseException;
 
 class RegisterRequest extends FormRequest
 {
@@ -22,45 +21,15 @@ class RegisterRequest extends FormRequest
     /**
      * Get the validation rules that apply to the request.
      *
+     * @param UserService $userService
      * @return array
      */
-    public function rules()
+    public function rules(UserService $userService)
     {
         return [
-            'name' => 'required|string|max:255|unique:users,name',
-            'email' => 'required|email|unique:users,email|max:255',
+            'name' => 'required|string|max:255|unique:'. $userService->getTableName() .',name',
+            'email' => 'required|email|unique:'. $userService->getTableName() .',email|max:255',
             'password' => 'required|max:255|min:6|confirmed|string',
         ];
     }
-
-
-    /**
-     * Get the error messages for the defined validation rules.
-     *
-     * @return array
-     */
-    public function messages()
-    {
-        return [
-
-        ];
-    }
-
-
-    /**
-     * Get custom attributes for validator errors.
-     *
-     * @return array
-     */
-    public function attributes()
-    {
-        return [
-            'name' => 'username',
-        ];
-    }
-
-    protected function failedValidation(Validator $validator) {
-        throw new HttpResponseException(response()->json($validator->errors(), 422));
-    }
-
 }

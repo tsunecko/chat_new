@@ -7,9 +7,6 @@ use App\Http\Resources\UserResource;
 use App\Http\Requests\ResetRequest;
 use App\Http\Requests\RegisterRequest;
 use App\Http\Requests\LoginRequest;
-use App\Services\UserServiceInterface;
-use Illuminate\Support\Facades\Auth;
-use Symfony\Component\HttpFoundation\Request;
 
 class AuthController extends Controller
 {
@@ -30,10 +27,6 @@ class AuthController extends Controller
     public function __construct(UserService $userService)
     {
         $this->userService = $userService;
-
-//        $userService->getAll();
-
-//        $this->userService = new UserService();
     }
 
 
@@ -45,23 +38,13 @@ class AuthController extends Controller
      */
     public function register(RegisterRequest $request)
     {
-
-
-//        $request->get('email');
-//        $request->input('email');
-//        $request->email;
-
-
-
-        $newUser = $this->userService->createUser($request->validated());
-
+        $newUser = $this->userService->create($request->validated());
 
         if (!$newUser) {
-//            abort(422, 'filed user created');
-            return response()->json(['failed_to_create_new_user']);
+            abort(422, 'failed to create new user');
         }
 
-        return $this->auth($request);
+        return $this->auth($request->only('name', 'password'));
     }
 
 
@@ -73,7 +56,7 @@ class AuthController extends Controller
      */
     public function login(LoginRequest $request)
     {
-        return $this->auth($request);
+        return $this->auth($request->only('name', 'password'));
     }
 
 
@@ -85,13 +68,11 @@ class AuthController extends Controller
      */
     public function reset(ResetRequest $request)
     {
-        $email = $request->get('email');
-
-        $token = bcrypt(str_random(10));
-        $resetPwd = $this->userService->resetPwd($email, $token);
+        $email = $request->input('email');
+        $resetPwd = $this->userService->resetPwd($email);
 
         if (!$resetPwd) {
-            return response()->json(['failed_to_send_token']);
+            abort(520, 'failed send token');
         }
 
         return response()->json(['check_email']);
@@ -100,16 +81,15 @@ class AuthController extends Controller
     /**
      * Auth User
      *
-     * @param $request
+     * @param $data
      * @return UserResource|\Illuminate\Http\JsonResponse
      */
-    public function auth($request)
+    public function auth($data)
     {
         //$credentials = $request->only('name', 'password');
 
         //if (Auth::attempt($credentials)) {
-            return UserResource::make($this->userService->one($request->get('name')));
-//            return new UserResource(Auth::user());
+            return UserResource::make($this->userService->one('name', $data['name']));
         //}
 
         //return response()->json(['failed_login']);

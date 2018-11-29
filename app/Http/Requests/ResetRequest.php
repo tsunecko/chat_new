@@ -2,10 +2,8 @@
 
 namespace App\Http\Requests;
 
-use App\User;
+use App\Rules\Email;
 use Illuminate\Foundation\Http\FormRequest;
-use Illuminate\Contracts\Validation\Validator;
-use Illuminate\Http\Exceptions\HttpResponseException;
 
 class ResetRequest extends FormRequest
 {
@@ -16,14 +14,7 @@ class ResetRequest extends FormRequest
      */
     public function authorize()
     {
-
-        if (User::query()->where('email', $this->request->get('email'))
-            ->first()
-        ) {
-            return true;
-        }
-        return false;
-
+        return true;
     }
 
     /**
@@ -34,12 +25,7 @@ class ResetRequest extends FormRequest
     public function rules()
     {
         return [
-            'email' => 'required|email|max:255',
+            'email' => ['required', 'email', 'max:255', new Email],
         ];
-    }
-
-    protected function failedValidation(Validator $validator)
-    {
-        throw new HttpResponseException(response()->json($validator->errors(), 422));
     }
 }

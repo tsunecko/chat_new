@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Hash;
 
 class Password implements Rule
 {
+
     private $pwd;
 
 

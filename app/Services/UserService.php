@@ -2,7 +2,6 @@
 
 namespace App\Services;
 
-use App\Http\Requests\RegisterRequest;
 use App\ResetPassword;
 use App\User;
 use Illuminate\Support\Facades\Hash;
@@ -24,12 +23,13 @@ class UserService implements UserServiceInterface
     /**
      * Get User model instance
      *
+     * @param $field
      * @param $value
      * @return User|bool|\Illuminate\Database\Eloquent\Builder|\Illuminate\Database\Eloquent\Model|object
      */
-    public function one($value)
+    public function one($field, $value)
     {
-        if ($user = User::query()->where('name', $value)->first()) {
+        if ($user = User::query()->where($field, $value)->first()) {
             return $user;
         }
         return false;
@@ -39,10 +39,10 @@ class UserService implements UserServiceInterface
     /**
      * Create User model
      *
-     * @param $request
-     * @return User
+     * @param $data
+     * @return bool
      */
-    public function createUser($data): bool
+    public function create($data): bool
     {
         $password = array_get($data,'password');
 
@@ -50,24 +50,17 @@ class UserService implements UserServiceInterface
             array_merge(
                 array_only($data,['name','email']),
                 [
-                    'password'=>sha1($password),
+                    'password' => Hash::make($password),
+                    'token' => bcrypt(str_random(10))
                 ]
             )
         );
 
-        if ($user){
+        if ($user) {
             return $user->save();
         }
 
         return false;
-
-
-//        return User::query()->create([
-//            'name' => $request->get('name'),
-//            'email' => $request->get('email'),
-//            'password' => Hash::make($request->get('password')),
-//            'token' => password_hash(str_random(10), PASSWORD_BCRYPT),
-//        ]);
     }
 
 
@@ -75,15 +68,34 @@ class UserService implements UserServiceInterface
      * Update User model
      *
      * @param $email
-     * @param $token
      * @return bool
      */
-    public function resetPwd($email, $token): ResetPassword
+    public function resetPwd($email): bool
     {
-        return ResetPassword::create([
-            'email' => $email,
-            'token' => $token
-        ]);
+        $pwd = ResetPassword::query()->make()->fill(
+            [
+                'email' => $email,
+                'token' => bcrypt(str_random(10)),
+                'created_at' => date("Y-m-d H:i:s"),
+            ]
+        );
+
+        if ($pwd) {
+            return $pwd->save();
+        }
+
+        return false;
     }
 
+
+    /**
+     * Get name of User`s table
+     *
+     * @return string
+     */
+    public function getTableName()
+    {
+        $user = new User;
+        return $user->getTable();
+    }
 }
