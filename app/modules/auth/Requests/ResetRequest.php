@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Http\Requests;
+namespace App\modules\auth\Requests;
 
-use App\Rules\Email;
+use App\modules\auth\Rules\Email;
 use Illuminate\Foundation\Http\FormRequest;
 
 class ResetRequest extends FormRequest

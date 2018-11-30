@@ -1,12 +1,14 @@
 <?php
 
-namespace App\Http\Requests;
+namespace App\modules\auth\Requests;
 
-use App\Services\UserService;
+use App\modules\auth\Rules\Password;
+use App\modules\auth\Services\UserService;
 use Illuminate\Foundation\Http\FormRequest;
 
-class RegisterRequest extends FormRequest
+class LoginRequest extends FormRequest
 {
+
     /**
      * Determine if the user is authorized to make this request.
      *
@@ -26,10 +28,11 @@ class RegisterRequest extends FormRequest
      */
     public function rules(UserService $userService)
     {
+        $user = $userService->one('name', request('name'));
+
         return [
-            'name' => 'required|string|max:255|unique:'. $userService->getTableName() .',name',
-            'email' => 'required|email|unique:'. $userService->getTableName() .',email|max:255',
-            'password' => 'required|max:255|min:6|confirmed|string',
+            'name' => ['required', 'string', 'max:255'],
+            'password' => ['required', 'max:255', 'min:6', 'string', new Password($user)],
         ];
     }
 }

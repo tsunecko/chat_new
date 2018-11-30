@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Services;
+namespace App\modules\auth\Services;
 
 use App\ResetPassword;
 use App\User;
@@ -93,7 +93,7 @@ class UserService implements UserServiceInterface
      *
      * @return string
      */
-    public function getTableName()
+    public function getUserTableName(): string
     {
         $user = new User;
         return $user->getTable();

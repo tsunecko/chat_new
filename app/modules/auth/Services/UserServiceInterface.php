@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Services;
+namespace App\modules\auth\Services;
 
 interface UserServiceInterface {
 

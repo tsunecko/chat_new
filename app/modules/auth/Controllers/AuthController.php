@@ -1,12 +1,13 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\modules\auth\Controllers;
 
-use App\Services\UserService;
-use App\Http\Resources\UserResource;
-use App\Http\Requests\ResetRequest;
-use App\Http\Requests\RegisterRequest;
-use App\Http\Requests\LoginRequest;
+use App\Http\Controllers\Controller;
+use App\modules\auth\Services\UserService;
+use App\modules\auth\Resources\UserResource;
+use App\modules\auth\Requests\ResetRequest;
+use App\modules\auth\Requests\RegisterRequest;
+use App\modules\auth\Requests\LoginRequest;
 
 class AuthController extends Controller
 {
@@ -86,13 +87,13 @@ class AuthController extends Controller
      */
     public function auth($data)
     {
-        //$credentials = $request->only('name', 'password');
+//        dd($data);
 
-        //if (Auth::attempt($credentials)) {
+        //if (auth()->attempt($data)) {
             return UserResource::make($this->userService->one('name', $data['name']));
         //}
 
-        //return response()->json(['failed_login']);
+        //abort(401, 'Unauthorized user');
     }
 
 }

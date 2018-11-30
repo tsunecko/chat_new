@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Rules;
+namespace App\modules\auth\Rules;
 
-use App\Services\UserService;
+use App\modules\auth\Services\UserService;
 use Illuminate\Contracts\Validation\Rule;
 
 class Email implements Rule

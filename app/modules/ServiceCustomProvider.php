@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Modules;
+namespace App\modules;
 
 use Illuminate\Support\ServiceProvider;
 
@@ -14,7 +14,8 @@ class ServiceCustomProvider extends ServiceProvider
     public function boot()
     {
         $modules = config('module.modules');
-        while (list(, $module) = each($modules)) {
+
+        foreach ($modules as $module) {
             if (file_exists(__DIR__ . '/' . $module . '/routes.php')) {
                 include __DIR__ . '/' . $module . '/routes.php';
             }
