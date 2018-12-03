@@ -88,7 +88,8 @@ class AuthController extends Controller
     public function auth($data)
     {
 //        dd($data);
-
+//dd(auth('token'));
+//dd(Auth::guard());
         //if (auth()->attempt($data)) {
             return UserResource::make($this->userService->one('name', $data['name']));
         //}

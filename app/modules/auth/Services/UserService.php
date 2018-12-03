@@ -9,6 +9,13 @@ use Illuminate\Support\Facades\Hash;
 class UserService implements UserServiceInterface
 {
 
+    private $user;
+
+    public function __construct()
+    {
+        $this->user = new User;
+    }
+
     /**
      * Get User model collection
      *
@@ -16,7 +23,7 @@ class UserService implements UserServiceInterface
      */
     public function getAll(): array
     {
-        return User::all(); // other logic
+        return $this->user->all(); // other logic
     }
 
 
@@ -29,7 +36,7 @@ class UserService implements UserServiceInterface
      */
     public function one($field, $value)
     {
-        if ($user = User::query()->where($field, $value)->first()) {
+        if ($user = $this->user->query()->where($field, $value)->first()) {
             return $user;
         }
         return false;
@@ -46,7 +53,7 @@ class UserService implements UserServiceInterface
     {
         $password = array_get($data,'password');
 
-        $user = User::query()->make()->fill(
+        $user = $this->user->query()->make()->fill(
             array_merge(
                 array_only($data,['name','email']),
                 [
@@ -95,7 +102,6 @@ class UserService implements UserServiceInterface
      */
     public function getUserTableName(): string
     {
-        $user = new User;
-        return $user->getTable();
+        return $this->user->getTable();
     }
 }

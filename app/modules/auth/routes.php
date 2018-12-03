@@ -1,9 +1,12 @@
 <?php
 
+use Illuminate\Support\Facades\Route;
+
 Route::group([
     'prefix' => 'api',
     'module'=>'auth',
-    'namespace' => 'App\modules\auth\Controllers'
+    'namespace' => 'App\modules\auth\Controllers',
+    //'middleware' => 'auth:api'
 ], function() {
 
     Route::get('/', function () {
@@ -14,6 +17,6 @@ Route::group([
 
     Route::post('register', 'AuthController@register');
 
-    Route::post('reset', 'AuthController@reset');
-
+    Route::post('reset', 'AuthController@reset')
+        ->middleware('CheckToken');
 });
