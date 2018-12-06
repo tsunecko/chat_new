@@ -13,10 +13,13 @@ Route::group([
         return view('welcome');
     });
 
-    Route::post('login', 'AuthController@login');
+    Route::post('login', 'AuthController@login')
+        ->middleware('guest')
+    ;
 
     Route::post('register', 'AuthController@register');
 
     Route::post('reset', 'AuthController@reset')
-        ->middleware('CheckToken');
+        ->middleware('CheckToken')
+    ;
 });

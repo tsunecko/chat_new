@@ -19,6 +19,6 @@ $factory->define(App\User::class, function (Faker $faker) {
         'name' => $faker->word,
         'email' => $faker->unique()->safeEmail,
         'password' => Hash::make('123456'), // secret
-        'token' => $faker->unique()->password,
+        'api_token' => $faker->unique()->password,
     ];
 });

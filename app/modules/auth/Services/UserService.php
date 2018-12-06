@@ -58,7 +58,7 @@ class UserService implements UserServiceInterface
                 array_only($data,['name','email']),
                 [
                     'password' => Hash::make($password),
-                    'token' => bcrypt(str_random(10))
+                    'api_token' => bcrypt(str_random(10))
                 ]
             )
         );

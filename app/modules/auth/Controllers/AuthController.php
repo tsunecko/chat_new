@@ -8,6 +8,7 @@ use App\modules\auth\Resources\UserResource;
 use App\modules\auth\Requests\ResetRequest;
 use App\modules\auth\Requests\RegisterRequest;
 use App\modules\auth\Requests\LoginRequest;
+use Illuminate\Support\Facades\Auth;
 
 class AuthController extends Controller
 {
@@ -87,9 +88,6 @@ class AuthController extends Controller
      */
     public function auth($data)
     {
-//        dd($data);
-//dd(auth('token'));
-//dd(Auth::guard());
         //if (auth()->attempt($data)) {
             return UserResource::make($this->userService->one('name', $data['name']));
         //}
